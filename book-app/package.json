@@ -17,6 +17,11 @@
   "lint-staged": {
   "**/*.{js,ts,tsx,json,css,md}": "prettier --write"
 },
+"husky": {
+     "hooks": {
+       "pre-commit": "lint-staged"
+     }
+   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
     "@types/react": "^19.1.8",
