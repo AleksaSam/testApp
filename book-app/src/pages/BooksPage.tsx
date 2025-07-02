@@ -16,6 +16,7 @@ interface Book {
 }
 
 export function BooksPage(){
+
   const [query, setQuery] = useState('')
   const [books, setBooks] = useState<Book[]>([])
   const [startIndex, setStartIndex] = useState(0)
@@ -71,7 +72,7 @@ export function BooksPage(){
   return (
     <div className="p-4 max-w-7xl mx-auto w-full">
       <BookSearch onSearch={handleSearch} />
-      <div className="mt-6 grid gap-6 grid-cols-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {books.map((book, index) => {
           const { title, authors, imageLinks } = book.volumeInfo
           return (

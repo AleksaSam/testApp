@@ -15,7 +15,7 @@ export const BookSearch: React.FC<Props> = ({ onSearch, initialQuery = ''}) => {
         }
     }
     return (
-        <form onSubmit={handleSubmit} className="mb-6 flex justify-center gap-2 sticky top-3 bg-white p-4 shadow">
+        <form onSubmit={handleSubmit} className="sticky top-0 z-20 bg-white px-4 py-3 shadow-md flex items-center gap-2">
             <input
                 type="text"
                 value={query}
