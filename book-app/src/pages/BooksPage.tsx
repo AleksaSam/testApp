@@ -22,56 +22,71 @@ export function BooksPage(){
   const [startIndex, setStartIndex] = useState(0)
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-    const fetchBooks = useCallback(
-    async (append = false) => {
-      if (!query) return
-
-      setLoading(true)
-
-      try {
-        const res = await fetch(
-          `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-            query
-          )}&startIndex=${startIndex}&maxResults=12`
-        )
-        const data = await res.json()
-
-        const newBooks: Book[] = (data.items || []).filter(
-          (newBook: Book) => !books.some(book => book.id === newBook.id)
-        )
-
-        if (append) {
-          setBooks(prev => [...prev, ...newBooks])
-        } else {
-          setBooks(newBooks)
-        }
-
-        setStartIndex(prev => prev + 12)
-        setHasMore(newBooks.length > 0)
-      } catch (err) {
-        console.error('Ошибка загрузки книг:', err)
-      } finally {
-        setLoading(false)
+   const fetchBooks = useCallback(
+  async (append: boolean, customQuery: string, index: number) => {
+    if (!customQuery) return
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await fetch(
+        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
+          customQuery
+        )}&startIndex=${index}&maxResults=12`
+      )
+      if(!res.ok) {
+        throw new Error(`Ошибка HTTP: ${res.status}`)
       }
-    },
-    [query, startIndex, books]
-  )
+      const data = await res.json()
+
+      const fetchedBooks: Book[] = data.items || []
+
+      if (append) {
+        setBooks(prev => [
+          ...prev,
+          ...fetchedBooks.filter(newBook => !prev.some(b => b.id === newBook.id)),
+        ])
+        setStartIndex(prev => prev + 12)
+       } else {
+        setBooks(fetchedBooks)
+        setStartIndex(12)
+      }
+
+      setHasMore(fetchedBooks.length === 12)
+    } catch (err) {
+      setError("Ошибка загрузки книг. Попробуйте позже.")
+      console.error('Ошибка загрузки книг:', err)
+    } finally {
+      setLoading(false)
+    }
+  },
+  [books]
+)
 
   const handleSearch = (search: string) => {
-    setQuery(search)
-    setStartIndex(0)
-    setHasMore(true)
-    setBooks([])
-  }
+  setQuery(search)
+  setBooks([])
+  setStartIndex(12) // <- т.к. мы загружаем первые 12, следующий startIndex = 12
+  setHasMore(true)
+  setError(null)
+  fetchBooks(false, search, 0) // загружаем с нуля
+}
 
-  useEffect(() => {
-    if (query) fetchBooks(false)
-  }, [query])
+  const loadMore = () => {
+    fetchBooks(true, query, startIndex)
+  }
 
   return (
     <div className="p-4 max-w-7xl mx-auto w-full">
       <BookSearch onSearch={handleSearch} />
+
+      {error && <div className="text-red-600 mt-4 text-center">{error}</div>}
+
+      {loading && books.length === 0 && (
+        <div className="text-center mt-4 text-gray-500">Загрузка...</div>
+      )}
+
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {books.map((book, index) => {
           const { title, authors, imageLinks } = book.volumeInfo
@@ -87,10 +102,10 @@ export function BooksPage(){
         })}
       </div>
 
-      {hasMore && !loading && (
+      {books.length > 0 && hasMore && !loading && (
         <div className="text-center mt-6">
           <button
-            onClick={() => fetchBooks(true)}
+            onClick={loadMore}
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
           >
             Загрузить ещё
@@ -98,7 +113,7 @@ export function BooksPage(){
         </div>
       )}
 
-      {loading && (
+      {loading && books.length > 0 && (
         <div className="text-center mt-4 text-gray-500">Загрузка...</div>
       )}
     </div>

@@ -20,11 +20,11 @@ export const BookSearch: React.FC<Props> = ({ onSearch, initialQuery = ''}) => {
                 type="text"
                 value={query}
                 onChange={e => setQuery(e.target.value)}
-                placeholder="Search by title or author..."
+                placeholder="Найти по названию или автору..."
                 className="border border-gray-300px px-4 py-2 rounded w-full"
             />
             <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
-                Search
+                Найти
             </button>
         </form>
     )

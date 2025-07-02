@@ -19,6 +19,7 @@ export function BookDetailPage() {
     const { id } = useParams()
     const [book, setBook] = useState<Book | null>(null)
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         const fetchBook = async () => {
@@ -26,9 +27,13 @@ export function BookDetailPage() {
                 const res = await fetch(
                     `https://www.googleapis.com/books/v1/volumes/${id}`
                 )
+                if(!res.ok) {
+                    throw new Error(`Ошибка HTTP: ${res.status}`)
+                }
                 const data = await res.json()
                 setBook(data)
             } catch(err) {
+                setError("Ошибка загрузки книги. Попробуйте позже.")
                 console.error("Ошибка загрузки книги:", err)
             } finally {
                 setLoading(false)
@@ -38,6 +43,7 @@ export function BookDetailPage() {
     }, [id])
 
     if (loading) return <div className="text-center mt-10">Загрузка...</div>
+    if (error) return <div className="text-center mt-10 text-red-600">{error}</div>
     if (!book) return <div className="text-center mt-10">Книга не найдена</div>
     const { title, authors, description, publishedDate, averageRating, imageLinks } = book.volumeInfo
     return(
@@ -52,7 +58,7 @@ export function BookDetailPage() {
                     />
                 </div>
                 <div className="md:w-2/3">
-                    <h1 className="text-2*1 font-bold mb-2">{title}</h1>
+                    <h1 className="text-2*1 font-semibold mb-2">{title}</h1>
                     <p className="text-gray-600 mb-2">
                         Автор(ы): {authors?.join(", ") || "Неизвестно"}
                     </p>
