@@ -1,0 +1,31 @@
+import React, { useState } from 'react'
+
+type Props = {
+  onSearch: (query: string) => void
+  initialQuery?: string
+}
+
+export const BookSearch: React.FC<Props> = ({ onSearch, initialQuery = ''}) => {
+    const [query, setQuery] = useState(initialQuery)
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault()
+        if (query.trim()) {
+            onSearch(query.trim())
+        }
+    }
+    return (
+        <form onSubmit={handleSubmit} className="mb-6 flex justify-center gap-2 sticky top-3 bg-white p-4 shadow">
+            <input
+                type="text"
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                placeholder="Search by title or author..."
+                className="border border-gray-300px px-4 py-2 rounded w-full"
+            />
+            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
+                Search
+            </button>
+        </form>
+    )
+}
