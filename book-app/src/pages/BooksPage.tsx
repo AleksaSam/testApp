@@ -1,19 +1,8 @@
 import React from 'react'
 import { BookSearch } from '../components/BookSearch'
 import { BookCard } from '../components/BookCard'
+import type { Book } from '../interfaces/Book'
 import { useEffect, useState, useCallback } from 'react'
-
-
-interface Book {
-  id: string
-  volumeInfo: {
-    title: string
-    authors?: string[]
-    imageLinks?: {
-      thumbnail?: string
-    }
-  }
-}
 
 export function BooksPage(){
 
