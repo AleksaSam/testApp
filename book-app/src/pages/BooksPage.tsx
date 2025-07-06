@@ -1,8 +1,7 @@
-import React from 'react'
 import { BookSearch } from '../components/BookSearch'
 import { BookCard } from '../components/BookCard'
 import type { Book } from '../interfaces/Book'
-import { useEffect, useState, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 
 export function BooksPage(){
 
@@ -24,8 +23,8 @@ export function BooksPage(){
           customQuery
         )}&startIndex=${index}&maxResults=12`
       )
-      if(!res.ok) {
-        throw new Error(`Ошибка HTTP: ${res.status}`)
+      if(!res?.ok) {
+        throw new Error(`Ошибка HTTP: ${res?.status}`)
       }
       const data = await res.json()
 
@@ -45,7 +44,6 @@ export function BooksPage(){
       setHasMore(fetchedBooks.length === 12)
     } catch (err) {
       setError("Ошибка загрузки книг. Попробуйте позже.")
-      console.error('Ошибка загрузки книг:', err)
     } finally {
       setLoading(false)
     }
