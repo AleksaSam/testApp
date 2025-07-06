@@ -15,15 +15,15 @@ export const BookSearch: React.FC<Props> = ({ onSearch, initialQuery = ''}) => {
         }
     }
     return (
-        <form onSubmit={handleSubmit} className="sticky top-0 z-20 bg-white px-4 py-3 shadow-md flex items-center gap-2">
+        <form onSubmit={handleSubmit} className="sticky top-0 z-20 bg-white px-4 py-3 shadow-md flex flex-col sm:flex-row items-stretch gap-2 sm:items-center">
             <input
                 type="text"
                 value={query}
                 onChange={e => setQuery(e.target.value)}
                 placeholder="Найти по названию или автору..."
-                className="border border-gray-300px px-4 py-2 rounded w-full"
+                className="border border-gray-300px px-4 py-2 rounded w-full sm:flex-1"
             />
-            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
+            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded w-full sm:w-auto">
                 Найти
             </button>
         </form>
